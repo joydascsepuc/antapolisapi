@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Models\Student;
+use App\Models\Student;
 
 class StudentController extends Controller
 {
@@ -14,7 +14,8 @@ class StudentController extends Controller
      */
     public function index()
     {
-        //
+        $students = Student::all();
+        return response()->json($students);
     }
 
     /**
@@ -35,7 +36,12 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $students = new Student();
+        $students->name = $request->input('name');
+        $students->mobile_no = $request->input('mobile_no');
+        $students->email = $request->input('email');
+        $students->save();
+        return response()->json($students);
     }
 
     /**
@@ -46,7 +52,13 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        //
+        $validate = Student::find($id);
+        if($validate){
+            $students = Student::find($id);
+            return response()->json($students);
+        }else{
+            return response()->json(['error' => 'There is no ID available to show']);
+        }
     }
 
     /**
@@ -69,7 +81,18 @@ class StudentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validate = Student::find($id);
+        if($validate){
+            $data = Student::Find($id);
+            $data->name = $request->input('name');
+            $data->mobile_no = $request->input('mobile_no');
+            $data->email = $request->input('email');
+            $data->save();
+            $students = Student::find($id);
+            return response()->json($students);
+        }else{
+            return response()->json(['error' => 'There is no ID available to update']);
+        }
     }
 
     /**
@@ -80,6 +103,8 @@ class StudentController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = Student::Find($id);
+        $data->delete();
+        return $this->index();
     }
 }
