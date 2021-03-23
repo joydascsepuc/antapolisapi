@@ -20,3 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::resource('student','App\Http\Controllers\StudentController');
 Route::resource('course','App\Http\Controllers\CourseController');
+Route::resource('action','App\Http\Controllers\CourseActionController');
+
+Route::delete('dropcourse/{student_id}/{course_id}','App\Http\Controllers\CourseActionController@dropcourse');

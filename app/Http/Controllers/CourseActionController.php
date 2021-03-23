@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Models\CourseAction;
+use App\Models\CourseAction;
+use App\Models\Student;
+use Illuminate\Support\Facades\DB;
 
 class CourseActionController extends Controller
 {
@@ -35,7 +37,11 @@ class CourseActionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $operations = new CourseAction();
+        $operations->student_id = $request->input('student_id');
+        $operations->course_id = $request->input('course_id');
+        $operations->save();
+        return response()->json($operations);
     }
 
     /**
@@ -46,7 +52,13 @@ class CourseActionController extends Controller
      */
     public function show($id)
     {
-        //
+        $validate = Student::find($id);
+        if($validate){
+            $data = DB::table("course_info")->get()->where("student_id",$id);
+            return response()->json($data);
+        }else{
+            return response()->json(['error' => 'Student Has no courses']);
+        }
     }
 
     /**
@@ -82,4 +94,22 @@ class CourseActionController extends Controller
     {
         //
     }
+
+    public function dropcourse($student_id,$course_id)
+    {
+        /*$id = DB::select('id')->where('student_id',$student_id)->where('course_id',$course_id);
+        $data = CourseAction::get()->where('student_id',$student_id)->where('course_id',$course_id);
+        $data = CourseAction::get($id)
+        $data->delete();
+        return $this->response->json(["Success"=>"Deleted"]);*/
+
+        // $id = DB::statement("select id from course_info where course_id =".$course_id." AND student_id=".$student_id);
+        // return response()->json($id);
+        $id = CourseAction::where('course_id',$course_id)->where('student_id',$student_id)->first()->id;
+        $data = CourseAction::Find($id);
+        $data->delete();
+        return response()->json(['success' => 'Deleted']);
+    }
+
+
 }
